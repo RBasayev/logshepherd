@@ -1,0 +1,73 @@
+# auto | manual ("manual" means sending SIGWINCH to the process)
+# (neither is implemented yet, maybe never will be)
+reload: manual
+# this should be something like (number of routes + 1 or 2)
+threads: 3
+# TODO: run in background (e.g. see https://github.com/qodrorid/godaemon/blob/master/godaemon.go)
+daemonize: false
+# TODO: log to file instead of STDOUT
+log: /var/log/logshepherd.log
+
+
+# definitions for outputting unfiltered logs
+# right now - same for all routes
+output_full:
+    # "file://" URL where full outputs will be stored, later
+    # maybe "bolt://" or "rrd://" (round-robin-db)
+    path: file:///var/log/big_archive_mount/logs
+    # when to rotate full output - in megabytes
+    cap: 30
+    # write buffer in lines
+    write_buffer: 20
+    # maximum buffering time in seconds (will be flushed, even if buffer not full)
+    write_timeout: 60
+
+# templates
+default_hide: &defaultHide
+    - " DBG1 "
+    - " DBG2 "
+    - " DBG3 "
+    - " NOTICE "
+    - " INFO "
+default_show: &defaultShow
+    - " SYSTEM "
+    - " ERROR "
+    - " WARNING "
+
+# routes, i.e. individual logs to be filtered, rotated etc.
+routes:
+    -
+        # id is also full output file name
+        id: SERVER2
+        input: /var/log/app_one/app.log
+        output: /var/log/app_one/app-filtered.log
+        # in lines (at most, twice this amount will be dumped
+        #             - BEFORE and AFTER the trigger)
+        dump_buffer: 50
+        # in seconds (time after which the AFTER part of
+        #               the dump becomes irrelevant)
+        dump_timeout: 20
+        dump_upon:
+            - " WARN"
+        filters:
+            show: *defaultShow
+        full_output: false
+        # in megabytes
+        rotate_at: 300
+    -
+        id: METASTORE
+        input: /var/log/app-two/service.log
+        output: /var/log/app-two/service-filtered.log
+        # in lines (at most, twice this amount will be dumped
+        #             - BEFORE and AFTER the trigger)
+        dump_buffer: 50
+        # in seconds (time after which the AFTER part of
+        #               the dump becomes irrelevant)
+        dump_timeout: 20
+        dump_upon:
+            - " ERROR "
+        filters:
+            hide: *defaultHide
+        full_output: false
+        # in megabytes
+        rotate_at: 300
