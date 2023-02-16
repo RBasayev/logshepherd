@@ -6,12 +6,32 @@ import (
 	"time"
 )
 
+/*
+The point of this function is keeping the channel empty.
+This function is supposed to be called only when the file
+for full output can't be created.
+This workaround is far from ideal, instead I should stop
+writing to the channel in processStream().
+*/
+func writeFullToDevNull(id string) {
+	dur, _ := time.ParseDuration("50ms")
+	for {
+		select {
+		case <-channels[id]:
+		default:
+			time.Sleep(dur)
+		}
+	}
+}
+
 func writeFullToFile(id string) {
 	fullFilePath := fullOutputURL.Path + fmt.Sprintf("%c", os.PathSeparator) + id + "-full.output"
 	fullFile, err := fileOpenOrCreate(fullFilePath)
 	if !isOK(err) {
-		fmt.Println("Could not open FULL LOG file. Ending thread for " + id)
-		return
+		// fmt.Println("Could not open FULL LOG file. Ending thread for " + id)
+		// TODO: can't quit here, need to read from that channel
+		fmt.Println("Could not open FULL LOG file. Keeping this thread only to empty the channel - " + id)
+		writeFullToDevNull(id)
 	}
 	// in essence - polling for updates in the channel every 50ms
 	dur, _ := time.ParseDuration("50ms")
@@ -51,8 +71,10 @@ func writeFullToFile(id string) {
 		// go zipRotatedFile(fullFilePath+".rotated."+timestamp)
 		fullFile, err = considerRotating(fullFile, fullOutputRotateAt)
 		if !isOK(err) {
-			fmt.Println("Could not open FILTERED LOG after ROTATION. Ending thread for " + id)
-			return
+			// fmt.Println("Could not open FILTERED LOG after ROTATION. Ending thread for " + id)
+			// TODO: can't quit here, need to read from that channel
+			fmt.Println("Could not open FILTERED LOG after ROTATION. Keeping this thread only to empty the channel - " + id)
+			writeFullToDevNull(id)
 		}
 
 	}

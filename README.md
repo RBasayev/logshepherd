@@ -34,7 +34,5 @@ The configuration in `logshepherd.yaml` is pretty self-explanatory.
 
 ## TODO
 
-- configuration reload on signal
-- __dump_buffer__ AFTER the trigger
-- also __dump_timeout__ for the AFTER part
+- release logs on signal
 - rotated logs compression

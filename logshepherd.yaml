@@ -41,12 +41,10 @@ routes:
         id: SERVER2
         input: /var/log/app_one/app.log
         output: /var/log/app_one/app-filtered.log
-        # in lines (at most, twice this amount will be dumped
-        #             - BEFORE and AFTER the trigger)
+        # in lines (at most, twice this amount will be dumped - BEFORE and AFTER the trigger)
         dump_buffer: 50
-        # in seconds (time after which the AFTER part of
-        #               the dump becomes irrelevant)
-        dump_timeout: 20
+        # time after which the AFTER part of the dump becomes irrelevant, dafault = 60 sec.
+        dump_timeout: 20 # in seconds
         dump_upon:
             - " WARN"
         filters:
@@ -58,12 +56,10 @@ routes:
         id: METASTORE
         input: /var/log/app-two/service.log
         output: /var/log/app-two/service-filtered.log
-        # in lines (at most, twice this amount will be dumped
-        #             - BEFORE and AFTER the trigger)
+        # in lines (at most, twice this amount will be dumped - BEFORE and AFTER the trigger)
         dump_buffer: 50
-        # in seconds (time after which the AFTER part of
-        #               the dump becomes irrelevant)
-        dump_timeout: 20
+        # time after which the AFTER part of the dump becomes irrelevant, dafault = 60 sec.
+        dump_timeout: 20 # in seconds
         dump_upon:
             - " ERROR "
         filters:

@@ -1,14 +1,15 @@
 package main
 
 type inputDef struct {
-	ID         string
-	Input      string
-	Output     string
-	DumpBuffer int      `yaml:"dump_buffer"`
-	DumpUpon   []string `yaml:"dump_upon,omitempty"`
-	FullOutput bool     `yaml:"full_output,omitempty"`
-	RotateAt   int      `yaml:"rotate_at,omitempty"`
-	Filters    map[string][]string
+	ID          string
+	Input       string
+	Output      string
+	DumpBuffer  int      `yaml:"dump_buffer"`
+	DumpTimeout int      `yaml:"dump_timeout"`
+	DumpUpon    []string `yaml:"dump_upon,omitempty"`
+	FullOutput  bool     `yaml:"full_output,omitempty"`
+	RotateAt    int      `yaml:"rotate_at,omitempty"`
+	Filters     map[string][]string
 }
 
 type logshepherdConf struct {
